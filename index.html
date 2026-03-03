@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Open Email</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      // Redirect immediately to mailto:
+      const to = "Sam@hanify.net";
+      const subject = "your subject is here !!!";
+      const body = "hi there this is just a test on your application";
+
+      const mailto = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+      window.location.href = mailto;
+    </script>
+  </head>
+  <body>
+    <p>If the email app didn’t open, tap here:</p>
+    <a id="fallback" href="#">Open email</a>
+
+    <script>
+      document.getElementById("fallback").href = mailto;
+    </script>
+  </body>
+</html>
