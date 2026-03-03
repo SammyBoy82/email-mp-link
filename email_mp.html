@@ -1,61 +1,9 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <title>Email MP</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #f5f5f5;
-    }
-    .container {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-    .button {
-      display: inline-block;
-      padding: 14px 20px;
-      border-radius: 10px;
-      text-decoration: none;
-      background: #2b7cff;
-      color: white;
-      font-weight: bold;
-      margin-top: 15px;
-    }
-    .debug {
-      margin-top: 15px;
-      font-size: 12px;
-      opacity: 0.6;
-      word-break: break-all;
-    }
-  </style>
-</head>
-
-<body>
-<div class="container">
-  <h2>Open Your Email</h2>
-  <p>Tap the button below to open your email client:</p>
-
-  <a id="openBtn" class="button" href="#">📧 Open Email</a>
-
-  <div id="debug" class="debug"></div>
-</div>
-
 <script>
   const params = new URLSearchParams(window.location.search);
   const zone = (params.get("zone") || "").toUpperCase().trim();
   const name = (params.get("name") || "").trim();
 
-  // =============================
-  // ADD ALL ELECTORATES HERE
-  // =============================
   const profiles = {
-
     "ASTON": {
       to: "mary.doyle.mp@aph.gov.au",
       cc: "meliiran@gmail.com",
@@ -64,69 +12,29 @@
 
 recent memorial gatherings held in Australia following the death of Ayatollah Ali Khamenei.
 
-As you are aware, Ayatollah Khamenei served as the Supreme Leader of Iran and Commander-in-Chief of its armed forces, including the Islamic Revolutionary Guard Corps (IRGC), which is listed as a terrorist organisation under Australian law.
-
-We fully respect Australia’s commitment to freedom of religion and peaceful assembly. Our concern is not with lawful religious observance. However, given the current heightened international situation and strong emotions within the Iranian diaspora, there is genuine concern about the potential for rhetoric at such gatherings to cross into the glorification of institutions associated with a listed organisation, or to inflame tensions during an already sensitive period.
-
-In recent days, members of our community have reported incidents of harassment and intimidation linked to escalating political tensions. These include:
-• A reported confrontation at Monash University;
-• An incident in suburban streets around Doncaster;
-• A case involving a landlord allegedly intimidating a tenant in relation to political views surrounding recent events.
-
-While these incidents may be isolated, together they have contributed to a growing sense of vulnerability within parts of the Iranian-Australian community.
-
-Many Iranian Australians are now concerned about exercising their lawful right to free expression without fear of confrontation, intimidation, or retaliation in their workplaces, universities, or housing situations.
-
-Given Australia’s experience in carefully managing sensitive community tensions, it is important that all public gatherings — of any kind — remain peaceful, compliant with Australian law, and free from incitement or hate speech.
-
-For many in the diaspora, recent events have also resurfaced deep psychological trauma. Large numbers of Iranian Australians have lived through repression, imprisonment, loss of loved ones, or forced displacement under the rule of this regime. Public expressions of relief following his death reflect, for many, a sense of personal closure rather than hostility toward any religious community.
-
-In light of the current climate, we respectfully request that relevant authorities:
-• Ensure all gatherings remain fully compliant with Australian law;
-• Guard against any material support or advocacy for a listed terrorist organisation;
-• Consider appropriate risk assessment and visibility measures where deemed necessary to safeguard public safety;
-• Ensure that all members of the community can exercise their democratic rights without fear of intimidation.
-
-Our intention is not to restrict lawful religious practice, but to ensure that Australian law is upheld and that community cohesion and public safety are maintained during this sensitive period.
-
 Thank you for your attention to this matter.`
     }
-
-    // Add other electorates below...
   };
 
   const profile = profiles[zone];
 
   if (!profile) {
-    document.body.innerHTML =
-      `<h3>Electorate not configured</h3>
-       <p>No profile found for: <b>${zone || "(empty)"}</b></p>`;
-    throw new Error("No profile configured for zone: " + zone);
+    document.body.innerHTML = "<h3>Electorate not configured</h3>";
+    throw new Error("Invalid zone");
   }
 
-  const to = String(profile.to || "").trim();
-  const cc = String(profile.cc || "").trim();
-  const subject = String(profile.subject || "");
-  const signature = name ? `\n\nKind regards,\n${name}\n` : `\n\nKind regards,\n`;
-  const finalBody = String(profile.body || "") + signature;
+  const to = profile.to.trim();
+  const cc = profile.cc ? profile.cc.trim() : "";
+  const subject = profile.subject;
+  const signature = name ? `\n\nKind regards,\n${name}` : "";
+  const finalBody = profile.body + signature;
 
-  // =============================
-  // ANDROID SAFE MAILTO FORMAT
-  // =============================
-  const qs = new URLSearchParams();
-  qs.set("to", to);  // KEY FIX
-  if (cc) qs.set("cc", cc);
-  qs.set("subject", subject);
-  qs.set("body", finalBody);
-
-  const mailto = `mailto:?${qs.toString()}`;
+  // ✅ MANUAL ENCODING (no + symbols)
+  const mailto =
+    "mailto:?to=" + encodeURIComponent(to) +
+    (cc ? "&cc=" + encodeURIComponent(cc) : "") +
+    "&subject=" + encodeURIComponent(subject) +
+    "&body=" + encodeURIComponent(finalBody);
 
   document.getElementById("openBtn").href = mailto;
-
-  // Optional debug display (you can remove later)
-  document.getElementById("debug").innerText =
-    `zone=${zone} | to=${to} | cc=${cc}`;
 </script>
-
-</body>
-</html>
