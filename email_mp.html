@@ -1,31 +1,85 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <title>Email MP</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body>
-
 <script>
-  (function() {
-      const to = "samh@byte.com.au";
-      const subject = "subject is here";
-      const body = "Body 1 is here";
+  // Read query parameters
+  const params = new URLSearchParams(window.location.search);
+  const zone = (params.get("zone") || "").toUpperCase();
+  const name = (params.get("name") || "").trim();
 
-      const mailtoLink =
-          "mailto:" + to +
-          "?subject=" + encodeURIComponent(subject) +
-          "&body=" + encodeURIComponent(body);
+  // Profiles map (ADD MORE ELECTORATES HERE)
+  const profiles = {
+    "ASTON": {
+      to: "mary.doyle.mp@aph.gov.au",
+      cc: "meliiran@gmail.com",
+      subject: "Community Safety and Compliance Concerns Regarding Recent Gatherings",
+      body: `Dear Ms Mary Doyle MP,
 
-      // Fallback link
-      document.write('<p>If email did not open automatically click below:</p>');
-      document.write('<a href="' + mailtoLink + '">Open Email</a>');
+recent memorial gatherings held in Australia following the death of Ayatollah Ali Khamenei.
 
-      // Redirect AFTER page loads
-      window.location.href = mailtoLink;
-  })();
+As you are aware, Ayatollah Khamenei served as the Supreme Leader of Iran and Commander-in-Chief of its armed forces, including the Islamic Revolutionary Guard Corps (IRGC), which is listed as a terrorist organisation under Australian law.
+
+We fully respect Australia’s commitment to freedom of religion and peaceful assembly. Our concern is not with lawful religious observance. However, given the current heightened international situation and strong emotions within the Iranian diaspora, there is genuine concern about the potential for rhetoric at such gatherings to cross into the glorification of institutions associated with a listed organisation, or to inflame tensions during an already sensitive period.
+
+In recent days, members of our community have reported incidents of harassment and intimidation linked to escalating political tensions. These include:
+• A reported confrontation at Monash University;
+• An incident in suburban streets around Doncaster;
+• A case involving a landlord allegedly intimidating a tenant in relation to political views surrounding recent events.
+
+While these incidents may be isolated, together they have contributed to a growing sense of vulnerability within parts of the Iranian-Australian community.
+
+Many Iranian Australians are now concerned about exercising their lawful right to free expression without fear of confrontation, intimidation, or retaliation in their workplaces, universities, or housing situations.
+
+Given Australia’s experience in carefully managing sensitive community tensions, it is important that all public gatherings — of any kind — remain peaceful, compliant with Australian law, and free from incitement or hate speech.
+
+For many in the diaspora, recent events have also resurfaced deep psychological trauma. Large numbers of Iranian Australians have lived through repression, imprisonment, loss of loved ones, or forced displacement under the rule of this regime. Public expressions of relief following his death reflect, for many, a sense of personal closure rather than hostility toward any religious community.
+
+In light of the current climate, we respectfully request that relevant authorities:
+• Ensure all gatherings remain fully compliant with Australian law;
+• Guard against any material support or advocacy for a listed terrorist organisation;
+• Consider appropriate risk assessment and visibility measures where deemed necessary to safeguard public safety;
+• Ensure that all members of the community can exercise their democratic rights without fear of intimidation.
+
+Our intention is not to restrict lawful religious practice, but to ensure that Australian law is upheld and that community cohesion and public safety are maintained during this sensitive period.
+
+Thank you for your attention to this matter.`
+    },
+
+    // TODO: Add the rest of your electorates here, e.g.
+    // "BRUCE": { to:"...", cc:"...", subject:"...", body:"..." },
+  };
+
+  const profile = profiles[zone];
+
+  if (!profile) {
+    document.body.innerHTML =
+      `<h3>Electorate not configured</h3>
+       <p>No email profile is configured for: <b>${zone || "(empty)"}</b></p>
+       <p>Please add it inside <code>profiles</code> in <code>email_mp.html</code>.</p>`;
+  } else {
+    const signature = name ? `\n\nKind regards,\n${name}\n` : `\n\nKind regards,\n`;
+    const finalBody = profile.body + signature;
+
+    let mailto = `mailto:${profile.to}?subject=${encodeURIComponent(profile.subject)}&body=${encodeURIComponent(finalBody)}`;
+
+    // Add CC if provided
+    if (profile.cc) {
+      mailto += `&cc=${encodeURIComponent(profile.cc)}`;
+    }
+
+    // Fallback link in case redirect is blocked
+    document.body.innerHTML =
+      `<p>If your email app didn’t open automatically, tap below:</p>
+       <p><a href="${mailto}">Open Email</a></p>`;
+
+    // Redirect
+    window.location.href = mailto;
+  }
 </script>
-
 </body>
 </html>
