@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Email MP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      const to = "samh@byte.com.au";
+      const subject = "subject is here";
+      const body = "Body 1 is here";
+
+      const mailto = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.location.href = mailto;
+
+      // fallback if redirect blocked
+      window.mailtoFallback = mailto;
+    </script>
+  </head>
+  <body>
+    <p>If your email app didn’t open automatically, tap below:</p>
+    <a id="fallback" href="#">Open email</a>
+    <script>
+      document.getElementById("fallback").href = window.mailtoFallback;
+    </script>
+  </body>
+</html>
