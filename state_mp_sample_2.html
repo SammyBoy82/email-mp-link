@@ -1,31 +1,8 @@
-
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Email SEC</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script>
-      const to = "samh@byte.com.au";
-      const subject = "subject 2 is here";
-      const body = "Body 2 is here";
-
-      const mailto = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      window.location.href = mailto;
-
-      window.mailtoFallback = mailto;
-    </script>
-  </head>
-  <body>
-    <p>If your email app didn’t open automatically, tap below:</p>
-    <a id="fallback" href="#">Open email</a>
-    <script>
-      document.getElementById("fallback").href = window.mailtoFallback;
-    </script><!doctype html>
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Email SEC</title>
+  <title>state_mp_sample_2</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
@@ -64,12 +41,10 @@
   // Key format: UPPERCASE with spaces replaced by underscore
   // =============================
   const profiles = {
-    
-    const profiles = {
-	
-	"ASTON": {
-     to: "mary.doyle.mp@aph.gov.au",
-      cc: "meliiran@gmail.com",
+
+    "ASTON": {
+      to: "mary.doyle.mp@aph.gov.au",
+      cc: "meliran.australia@gmail.com",
       subject: "Community Safety and Compliance Concerns Regarding Recent Gatherings",
       body: `Dear Ms Mary Doyle MP,
 
@@ -219,7 +194,7 @@ Kind regards,`
     },
 
     "FRASER": {
-      to: "daniel.mulino.mp@aph.gov.au",
+      to: "daniel.mulik.mp@aph.gov.au",
       cc: "meliran.australia@gmail.com",
       subject: "Community Safety and Compliance Concerns Regarding Recent Gatherings",
       body: `Dear Mr Daniel Mulino MP,
@@ -333,7 +308,7 @@ Kind regards,`
     },
 
     "HOTHAM": {
-      to: "clare.oneil.mp@aph.gov.au",
+      to: "clare.obrien.mp@aph.gov.au",
       cc: "meliran.australia@gmail.com",
       subject: "Community Safety and Compliance Concerns Regarding Recent Gatherings",
       body: `Dear Ms Clare O’Neil MP,
@@ -579,8 +554,6 @@ Thank you for your continued commitment to public safety and harmony within our 
 Kind regards,`
     }
 
-};
-
     // NOTE: The rest of electorates from your CSV are included similarly.
     // If you want me to paste the remaining ones here as well, upload the CSV that includes ASTON + DUNKLEY too,
     // or tell me to include them manually and I’ll add them.
@@ -617,7 +590,4 @@ Kind regards,`
 </script>
 
 </body>
-</html>
-
-  </body>
 </html>
