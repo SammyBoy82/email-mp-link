@@ -4,27 +4,58 @@
   <meta charset="utf-8" />
   <title>Email MP</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <style>
-    body { font-family: Arial, sans-serif; padding: 16px; }
-    a.button {
-      display: inline-block; padding: 14px 18px; border-radius: 10px;
-      text-decoration: none; border: 1px solid #ccc;
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
     }
-    .small { font-size: 13px; opacity: 0.8; word-break: break-all; }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .button {
+      display: inline-block;
+      padding: 14px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      background: #2b7cff;
+      color: white;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+    .debug {
+      margin-top: 15px;
+      font-size: 12px;
+      opacity: 0.6;
+      word-break: break-all;
+    }
   </style>
 </head>
+
 <body>
-  <h3>Open your email</h3>
-  <p>Tap the button below:</p>
-  <p><a id="openBtn" class="button" href="#">📧 Open Email</a></p>
-  <p class="small" id="debug"></p>
+<div class="container">
+  <h2>Open Your Email</h2>
+  <p>Tap the button below to open your email client:</p>
+
+  <a id="openBtn" class="button" href="#">📧 Open Email</a>
+
+  <div id="debug" class="debug"></div>
+</div>
 
 <script>
   const params = new URLSearchParams(window.location.search);
   const zone = (params.get("zone") || "").toUpperCase().trim();
   const name = (params.get("name") || "").trim();
 
+  // =============================
+  // ADD ALL ELECTORATES HERE
+  // =============================
   const profiles = {
+
     "ASTON": {
       to: "mary.doyle.mp@aph.gov.au",
       cc: "meliiran@gmail.com",
@@ -60,7 +91,8 @@ Our intention is not to restrict lawful religious practice, but to ensure that A
 
 Thank you for your attention to this matter.`
     }
-    // Add other electorates here...
+
+    // Add other electorates below...
   };
 
   const profile = profiles[zone];
@@ -68,40 +100,33 @@ Thank you for your attention to this matter.`
   if (!profile) {
     document.body.innerHTML =
       `<h3>Electorate not configured</h3>
-       <p>No profile for: <b>${zone || "(empty zone)"}</b></p>`;
-    throw new Error("No profile for zone: " + zone);
+       <p>No profile found for: <b>${zone || "(empty)"}</b></p>`;
+    throw new Error("No profile configured for zone: " + zone);
   }
 
   const to = String(profile.to || "").trim();
-  if (!to) {
-    document.body.innerHTML =
-      `<h3>Configuration error</h3>
-       <p>This electorate profile has an empty 'to' email.</p>`;
-    throw new Error("Empty 'to' email for zone: " + zone);
-  }
-
-  const subject = String(profile.subject || "");
   const cc = String(profile.cc || "").trim();
-
+  const subject = String(profile.subject || "");
   const signature = name ? `\n\nKind regards,\n${name}\n` : `\n\nKind regards,\n`;
   const finalBody = String(profile.body || "") + signature;
 
-  let mailto =
-    `mailto:${to}` +
-    `?subject=${encodeURIComponent(subject)}` +
-    `&body=${encodeURIComponent(finalBody)}`;
+  // =============================
+  // ANDROID SAFE MAILTO FORMAT
+  // =============================
+  const qs = new URLSearchParams();
+  qs.set("to", to);  // KEY FIX
+  if (cc) qs.set("cc", cc);
+  qs.set("subject", subject);
+  qs.set("body", finalBody);
 
-  if (cc) {
-    mailto += `&cc=${encodeURIComponent(cc)}`;
-  }
+  const mailto = `mailto:?${qs.toString()}`;
 
-  // Set clickable link (Android-friendly)
-  const btn = document.getElementById("openBtn");
-  btn.href = mailto;
+  document.getElementById("openBtn").href = mailto;
 
-  // Helpful debug line (you can remove later)
-  document.getElementById("debug").textContent =
-    `zone=${zone} | to=${to} | cc=${cc || "(none)"}`;
+  // Optional debug display (you can remove later)
+  document.getElementById("debug").innerText =
+    `zone=${zone} | to=${to} | cc=${cc}`;
 </script>
+
 </body>
 </html>
