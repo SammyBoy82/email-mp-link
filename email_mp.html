@@ -4,15 +4,26 @@
   <meta charset="utf-8" />
   <title>Email MP</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; padding: 16px; }
+    a.button {
+      display: inline-block; padding: 14px 18px; border-radius: 10px;
+      text-decoration: none; border: 1px solid #ccc;
+    }
+    .small { font-size: 13px; opacity: 0.8; word-break: break-all; }
+  </style>
 </head>
 <body>
+  <h3>Open your email</h3>
+  <p>Tap the button below:</p>
+  <p><a id="openBtn" class="button" href="#">📧 Open Email</a></p>
+  <p class="small" id="debug"></p>
+
 <script>
-  // Read query parameters
   const params = new URLSearchParams(window.location.search);
-  const zone = (params.get("zone") || "").toUpperCase();
+  const zone = (params.get("zone") || "").toUpperCase().trim();
   const name = (params.get("name") || "").trim();
 
-  // Profiles map (ADD MORE ELECTORATES HERE)
   const profiles = {
     "ASTON": {
       to: "mary.doyle.mp@aph.gov.au",
@@ -48,10 +59,8 @@ In light of the current climate, we respectfully request that relevant authoriti
 Our intention is not to restrict lawful religious practice, but to ensure that Australian law is upheld and that community cohesion and public safety are maintained during this sensitive period.
 
 Thank you for your attention to this matter.`
-    },
-
-    // TODO: Add the rest of your electorates here, e.g.
-    // "BRUCE": { to:"...", cc:"...", subject:"...", body:"..." },
+    }
+    // Add other electorates here...
   };
 
   const profile = profiles[zone];
@@ -59,27 +68,40 @@ Thank you for your attention to this matter.`
   if (!profile) {
     document.body.innerHTML =
       `<h3>Electorate not configured</h3>
-       <p>No email profile is configured for: <b>${zone || "(empty)"}</b></p>
-       <p>Please add it inside <code>profiles</code> in <code>email_mp.html</code>.</p>`;
-  } else {
-    const signature = name ? `\n\nKind regards,\n${name}\n` : `\n\nKind regards,\n`;
-    const finalBody = profile.body + signature;
-
-    let mailto = `mailto:${profile.to}?subject=${encodeURIComponent(profile.subject)}&body=${encodeURIComponent(finalBody)}`;
-
-    // Add CC if provided
-    if (profile.cc) {
-      mailto += `&cc=${encodeURIComponent(profile.cc)}`;
-    }
-
-    // Fallback link in case redirect is blocked
-    document.body.innerHTML =
-      `<p>If your email app didn’t open automatically, tap below:</p>
-       <p><a href="${mailto}">Open Email</a></p>`;
-
-    // Redirect
-    window.location.href = mailto;
+       <p>No profile for: <b>${zone || "(empty zone)"}</b></p>`;
+    throw new Error("No profile for zone: " + zone);
   }
+
+  const to = String(profile.to || "").trim();
+  if (!to) {
+    document.body.innerHTML =
+      `<h3>Configuration error</h3>
+       <p>This electorate profile has an empty 'to' email.</p>`;
+    throw new Error("Empty 'to' email for zone: " + zone);
+  }
+
+  const subject = String(profile.subject || "");
+  const cc = String(profile.cc || "").trim();
+
+  const signature = name ? `\n\nKind regards,\n${name}\n` : `\n\nKind regards,\n`;
+  const finalBody = String(profile.body || "") + signature;
+
+  let mailto =
+    `mailto:${to}` +
+    `?subject=${encodeURIComponent(subject)}` +
+    `&body=${encodeURIComponent(finalBody)}`;
+
+  if (cc) {
+    mailto += `&cc=${encodeURIComponent(cc)}`;
+  }
+
+  // Set clickable link (Android-friendly)
+  const btn = document.getElementById("openBtn");
+  btn.href = mailto;
+
+  // Helpful debug line (you can remove later)
+  document.getElementById("debug").textContent =
+    `zone=${zone} | to=${to} | cc=${cc || "(none)"}`;
 </script>
 </body>
 </html>
